@@ -16,7 +16,7 @@ def prestige():
 
     #Take a screenshot of the current screen
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    pyautogui.screenshot(f"./Screenshots/Prestige/{timestamp}-prestige.png")
+    #pyautogui.screenshot(f"./Screenshots/Prestige/{timestamp}-prestige.png")
 
     #Attempt to find the prestige button
     print("Attempting to prestige")
@@ -108,7 +108,7 @@ def scroll_to_golden_server():
         coin_fragment_icon, xCor, yCor = nf.MoveToLocation(file_path='coin_fragment_icon.png',
                                                            parent_directory='Bitcoin_Miner',
                                                            timeout=5,
-                                                           region_rectangle=(1078,192,1134,250))
+                                                           )
         
         #If the coin fragment icon is not found, we break the loop and assume we are in an advertisement
         if coin_fragment_icon == '':
@@ -174,18 +174,19 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
 
                     #Attempt to find the following images
                     file_path, xCor, yCor = nf.MoveToLocationListIndividualRegions(
-                        file_paths=['power_up_2.png', 'power_up_3.png','obtain_gift.png','shiba_icon.png','chest_collect_button.png','prestige_icon_ready.png'],
+                        file_paths=['prestige_icon_ready.png','power_up_2.png', 'power_up_3.png','obtain_gift.png','top_of_screen_indicator.png','chest_collect_button.png'],
                         parent_directory='Bitcoin_Miner',
                         timeout=4,
                         #region_rectangle_list=[(800,520,72,46),(802,662,76,206),(905, 648, 125, 22),(1147,569,61,34),(851,954,216,87),(1133,187,70,65)],
-                        gray_scale_flag=True,
-                        settle_delay=0.01)
+                        gray_scale_flag=False,
+                        settle_delay=0.01,
+                        move_to_flag=False)
 
-                    #If the shiba icon is found, we tap on that farming area
-                    if(file_path == 'shiba_icon.png'):
+                    #If the top of the screen indiator is found, we tap on that farming area
+                    if(file_path == 'top_of_screen_indicator.png'):
                         #Tap on area to collect gifts and satoshis
                         print("Tapping on farming area for gifts and satoshis")
-                        nf.tap(xCor, yCor, x_offset=-242, y_offset=-156, settle_delay=0)
+                        nf.tap(xCor, yCor, x_offset=-100, y_offset=-85, settle_delay=0)
 
                     #If the obtain_gift icon is found, we tap on it
                     elif(file_path == 'obtain_gift.png'):
@@ -228,8 +229,7 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
                         #Attempt to find the coin fragment icon
                         coin_fragment_icon, xCor, yCor = nf.MoveToLocation(file_path='coin_fragment_icon.png',
                                                                            parent_directory='Bitcoin_Miner',
-                                                                           timeout=5,
-                                                                           region_rectangle=(1078,192,1134,250))
+                                                                           timeout=5)
                         
                         #If the coin fragment icon is found, we scroll up to the top of the screen
                         if coin_fragment_icon != '':
@@ -265,7 +265,7 @@ if __name__ == "__main__":
     move_to_flag = False
     gold_server_not_in_view = True
     mine_pickaxe_counter = 0
-    upgrade_counter = 5
+    upgrade_counter = 0
     ad_counter = 0
     upgrade_counter_limit = 5
     ad_counter_limit = 3
@@ -274,7 +274,7 @@ if __name__ == "__main__":
     DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1301305402532827156/3YfReb2XbGqZHk3QMPvpuwl6P4fveX_3ONepieeu05SqpT6l5UZ3Nh2Ml3UD74XR465G"
     webhook = DiscordWebhook(url=DISCORD_WEBHOOK_URL)
     TIME_BETWEEN_PRESTIGES = datetime.timedelta(seconds=1800)
-    disable_farm_flag = True
+    disable_farm_flag = False
 
     #Set the time since the last prestige as the current time
     time_since_last_prestige = datetime.datetime.now()
@@ -335,7 +335,7 @@ if __name__ == "__main__":
         filePath, xCor, yCor = nf.MoveToLocationList(file_paths=[
                                     'store_x_button.png',
                                     'manager_recruit_x_button.png',
-                                    'upgrade_menu_x_button.png',
+                                    'development_menu_x_button.png',
                                     'map_select_x_button.png',
                                     'prestige_icon_ready.png',
                                     'chest_collect_button.png',
@@ -397,14 +397,14 @@ if __name__ == "__main__":
                         upgrade_income_button, xCor, yCor = nf.MoveToLocation(file_path='development_upgrade_button.png',
                                                                               parent_directory='Bitcoin_Miner',
                                                                               timeout=5,
-                                                                              region_rectangle=(1036,458,1135,519),
-                                                                              confidence=0.80)
+                                                                              confidence=0.80,
+                                                                              move_to_flag=True)
                         
                         #If the upgrade income button is found, we tap on it
                         if upgrade_income_button != '':
                             #Tap on the upgrade income button
                             print("Income is able to be upgraded. Tapping on it")
-                            nf.tap(xCor, yCor)
+                            nf.tap(xCor, yCor,settle_delay=2.5)
                         
                         #Otherwise, we assume that we have insufficient funds to upgrade
                         else:
@@ -417,8 +417,8 @@ if __name__ == "__main__":
                         upgrade_powerup_button, xCor, yCor = nf.MoveToLocation(file_path='development_upgrade_button.png',
                                                                                parent_directory='Bitcoin_Miner',
                                                                                timeout=5,
-                                                                               region_rectangle=(1035,660,1136,730),
-                                                                               confidence=0.80)
+                                                                               confidence=0.80,
+                                                                               move_to_flag=True)
                         
                         #If the upgrade powerup button is found, we tap on it
                         if upgrade_powerup_button != '':

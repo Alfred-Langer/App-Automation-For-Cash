@@ -7,7 +7,7 @@ from discord_webhook import DiscordWebhook
 import datetime
 
 
-time.sleep()
+
 
 
 ##CONSTANTS
