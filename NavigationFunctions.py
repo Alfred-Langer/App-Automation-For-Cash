@@ -263,7 +263,7 @@ def hold(x, y, duration=2000, x_offset=0, y_offset=0, settle_delay = 0):
 
     time.sleep(settle_delay)
 
-# Swipe from one set of coordinates to another (This functino does not scale the coordinates)
+# Swipe from one set of coordinates to another (This function does not scale the coordinates)
 def swipe(x1, y1, x2, y2, duration=100, settle_delay=0):
 
     #Send the swipe command to the phone through adb
@@ -358,9 +358,10 @@ def clear_app(unknown_state_flag=False):
         #Swipe up to clear the app
         swipe(
             x1=int(PHONE_SCREEN_RESOLUTION[0] / 2),
-            y1=int(PHONE_SCREEN_RESOLUTION[1]),
+            y1=int(PHONE_SCREEN_RESOLUTION[1] * 0.8),
             x2=int(PHONE_SCREEN_RESOLUTION[0] / 2),
-            y2=int(PHONE_SCREEN_RESOLUTION[1] * 0.66),
+            y2=int(PHONE_SCREEN_RESOLUTION[1] *  0.2),
+            duration=100,
             settle_delay=3)
 
         #Tap on the screen to return to the last open app
@@ -461,7 +462,7 @@ def clear_advertisement():
         SCRCPY_REGION_RECTANGLE[0],
         SCRCPY_REGION_RECTANGLE[1],
         SCRCPY_REGION_RECTANGLE[2],
-        int(SCRCPY_REGION_RECTANGLE[3] * 0.5)
+        int(SCRCPY_REGION_RECTANGLE[3] * 0.75)
     )
     )
 

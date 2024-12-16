@@ -1,7 +1,4 @@
-
-from calendar import c
 import subprocess
-from turtle import clear, up
 import pyautogui
 import logging
 import time

@@ -2,6 +2,7 @@ import pyautogui
 import time
 from discord_webhook import DiscordWebhook
 import datetime
+import os
 import NavigationFunctions as nf
 
 
@@ -174,7 +175,12 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
 
                     #Attempt to find the following images
                     file_path, xCor, yCor = nf.MoveToLocationListIndividualRegions(
-                        file_paths=['power_up_2.png', 'power_up_3.png','obtain_gift.png','shiba_icon.png','chest_collect_button.png','prestige_icon_ready.png'],
+                        file_paths=['manager_ability_magnet.png', 
+                                    'manager_ability_power_up.png',
+                                    'obtain_gift.png',
+                                    'top_of_screen_indicator.png',
+                                    'chest_collect_button.png',
+                                    'prestige_icon_ready.png'],
                         parent_directory='Bitcoin_Miner',
                         timeout=4,
                         #region_rectangle_list=[(800,520,72,46),(802,662,76,206),(905, 648, 125, 22),(1147,569,61,34),(851,954,216,87),(1133,187,70,65)],
@@ -182,7 +188,7 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
                         settle_delay=0.01)
 
                     #If the shiba icon is found, we tap on that farming area
-                    if(file_path == 'shiba_icon.png'):
+                    if(file_path == 'top_of_screen_indicator.png'):
                         #Tap on area to collect gifts and satoshis
                         print("Tapping on farming area for gifts and satoshis")
                         nf.tap(xCor, yCor, x_offset=-242, y_offset=-156, settle_delay=0)
@@ -194,13 +200,13 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
                         nf.tap(xCor, yCor, settle_delay=2, y_offset=60)
                         
                     #If the magnet power up icon is found, we tap on it
-                    elif file_path == 'power_up_2.png':
+                    elif file_path == 'manager_ability_magnet.png':
                         #Tap on the magnet power up icon
                         print("Tapping on magnet power up icon to collect gifts and satoshis")
                         nf.tap(xCor, yCor, settle_delay=0)
                     
                     #If the magnet power up icon is found, we tap on it
-                    elif file_path == 'power_up_3.png':
+                    elif file_path == 'manager_ability_power_up.png':
                         #Tap on the magnet power up icon
                         print("Tapping on bomb power up icon to collect gifts and satoshis")
                         nf.tap(xCor, yCor, settle_delay=0)
@@ -257,9 +263,64 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
                     ad_counter = 0                            
 
             return(False)
-    
+
+def check_for_screenshots():
+    screenshot_files = [
+        '2x_income_button.png', 
+        'chest_collect_button.png', 
+        'coin_fragment_icon.png', 
+        'continue_prestige_button.png', 
+        'daily_streak_collect_button.png', 
+        'daily_streak_ok_button.png', 
+        'development_menu_button.png', 
+        'development_menu_x_button.png', 
+        'development_upgrade_button.png', 
+        'gold_server_icon.png', 
+        'island_2.png', 
+        'island_3.png', 
+        'manager_ability_income.png', 
+        'manager_ability_magnet.png', 
+        'manager_ability_power_up.png', 
+        'manager_recruit_x_button.png', 
+        'map_button.png', 
+        'map_enter_site_button.png', 
+        'map_select_x_button.png', 
+        'mine_button.png', 
+        'mission_completed.png', 
+        'obtain_gift.png', 
+        'ok_button.png', 
+        'power_surge_button.png', 
+        'prestige_icon.png', 
+        'prestige_icon_ready.png', 
+        'prestige_keep_button.png', 
+        'prestige_please_wait_indicator.png', 
+        'prestige_sell_button.png', 
+        'shrink_mine_button.png', 
+        'skip_prestige_button.png', 
+        'store_x_button.png', 
+        'top_of_screen_indicator.png', 
+        'unlock_coin_button.png', 
+        'unlock_coin_button_grey.png'
+    ]
+
+    base_directory = "./Screenshots/Bitcoin_Miner"
+    missing_screenshots = [file for file in screenshot_files if not os.path.exists(os.path.join(base_directory, file))]
+
+    for file in missing_screenshots:
+        print(f"{file} does not exist in the {base_directory} directory. Please take a screenshot of the missing file before running this script")
+
+    for file in set(screenshot_files) - set(missing_screenshots):
+        print(f"{file} exists")
+
+    # If there are no missing screenshots, we return True
+    return len(missing_screenshots) == 0
 
 if __name__ == "__main__":
+
+    #Check for all the necessary screenshots
+    if not check_for_screenshots():
+        print("Please add the necessary screenshots before running this script")
+        exit()
 
     #Initialize global variables
     move_to_flag = False

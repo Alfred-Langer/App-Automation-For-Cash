@@ -159,3 +159,4 @@ scrcpy-win64-v2.7
 app_automation_env
 *.txt
 old_scripts
+.vscode
