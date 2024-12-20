@@ -366,8 +366,8 @@ def clear_app(unknown_state_flag=False):
 
         #Tap on the screen to return to the last open app
         tap(
-            x=int(PHONE_SCREEN_RESOLUTION[0] / 2), 
-            y=int(PHONE_SCREEN_RESOLUTION[1] / 2), 
+            x=int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2), 
+            y=int((SCRCPY_REGION_RECTANGLE[1] + SCRCPY_REGION_RECTANGLE[3]) / 2), 
             settle_delay=2)
 
 # Function to reset the game if we are in an unknown state. (Typically used if we come across an advertisement we can't find the exit button for)
@@ -455,14 +455,15 @@ def clear_advertisement():
     'x_button_43.png',
     'x_button_44.png',
     'x_button_45.png',
-    'google_play_store.png'],
+    'google_play_store.png',
+    'google_play_store_2.png'],
     parent_directory="Advertisements",
     settle_delay=0.5,confidence=0.90,timeout=120,gray_scale_flag=True,
     region_rectangle=(
         SCRCPY_REGION_RECTANGLE[0],
         SCRCPY_REGION_RECTANGLE[1],
         SCRCPY_REGION_RECTANGLE[2],
-        int(SCRCPY_REGION_RECTANGLE[3] * 0.75)
+        int(SCRCPY_REGION_RECTANGLE[3])
     )
     )
 
@@ -475,7 +476,7 @@ def clear_advertisement():
         tap(xCor, yCor)
 
         #If you find the Google Play Store icon, we assume we are in the store and we need to retun to the game
-        if(filePath == 'google_play_store.png'):
+        if('google_play_store' in filePath):
 
             print("Google Play Store was opened. Closing the app and returning to the game")
 
