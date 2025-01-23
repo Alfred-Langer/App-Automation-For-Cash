@@ -181,15 +181,20 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
                         file_paths=['prestige_icon_ready.png',
                                     'manager_ability_magnet.png', 
                                     'manager_ability_power_up.png',
-                                    'obtain_gift.png',
                                     'top_of_screen_indicator.png',
+                                    'obtain_gift.png',
                                     'chest_collect_button.png'
                                     ],
                         parent_directory='Bitcoin_Miner',
                         timeout=4,
-                        #region_rectangle_list=[(800,520,72,46),(802,662,76,206),(905, 648, 125, 22),(1147,569,61,34),(851,954,216,87),(1133,187,70,65)],
+                        region_rectangle_list=[((nf.SCRCPY_REGION_RECTANGLE[0] + nf.SCRCPY_REGION_RECTANGLE[2])//2, nf.SCRCPY_REGION_RECTANGLE[1], nf.SCRCPY_REGION_RECTANGLE[2], (nf.SCRCPY_REGION_RECTANGLE[1] + nf.SCRCPY_REGION_RECTANGLE[3])//4),
+                                               (nf.SCRCPY_REGION_RECTANGLE[0], (nf.SCRCPY_REGION_RECTANGLE[1] + nf.SCRCPY_REGION_RECTANGLE[3])//4, nf.SCRCPY_REGION_RECTANGLE[2]//2, nf.SCRCPY_REGION_RECTANGLE[3]//4),
+                                               (905, 648, 125, 22),
+                                               (1147,569,61,34),
+                                               (851,954,216,87),
+                                               (1133,187,70,65)],
                         gray_scale_flag=False,
-                        settle_delay=0.01,
+                        settle_delay=0.0025,
                         confidence=0.90)
 
                     #If the shiba icon is found, we tap on that farming area
@@ -291,7 +296,8 @@ def check_for_screenshots():
         'map_button.png', 
         'map_enter_site_button.png', 
         'map_select_x_button.png', 
-        'mine_button.png', 
+        'mine_button.png',
+        'mine_button_shrink.png',
         'mission_completed.png', 
         'obtain_gift.png', 
         'ok_button.png', 
@@ -300,13 +306,13 @@ def check_for_screenshots():
         'prestige_icon_ready.png', 
         'prestige_keep_button.png', 
         'prestige_please_wait_indicator.png', 
-        'prestige_sell_button.png', 
-        'shrink_mine_button.png', 
-        'skip_prestige_button.png', 
+        'prestige_sell_button.png',  
+        'prestige_skip_button.png', 
         'store_x_button.png', 
         'top_of_screen_indicator.png', 
         'unlock_coin_button.png', 
-        'unlock_coin_button_grey.png'
+        'unlock_coin_button_grey.png',
+        'welcome_back_x_button.png'
     ]
 
     base_directory = "./Screenshots/Bitcoin_Miner"
@@ -332,13 +338,13 @@ if __name__ == "__main__":
     move_to_flag = False
     gold_server_not_in_view = True
     mine_pickaxe_counter = 0
-    upgrade_counter = 0
+    upgrade_counter = 5
     ad_counter = 0
     upgrade_counter_limit = 5
     ad_counter_limit = 3
     mine_pickaxe_counter_limit = 15
     current_map = 1
-    DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1301305402532827156/3YfReb2XbGqZHk3QMPvpuwl6P4fveX_3ONepieeu05SqpT6l5UZ3Nh2Ml3UD74XR465G"
+    DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
     webhook = DiscordWebhook(url=DISCORD_WEBHOOK_URL)
     TIME_BETWEEN_PRESTIGES = datetime.timedelta(seconds=1800)
     disable_farm_flag = False
@@ -404,6 +410,7 @@ if __name__ == "__main__":
                                     'manager_recruit_x_button.png',
                                     'development_menu_x_button.png',
                                     'map_select_x_button.png',
+                                    'welcome_back_x_button.png',
                                     'prestige_icon_ready.png',
                                     'chest_collect_button.png',
                                     'unlock_coin_button.png',
@@ -413,7 +420,9 @@ if __name__ == "__main__":
                                     'manager_ability_power_up.png',
                                     #'power_surge_button.png',
                                     #'2x_income_button.png',
-                                    'shrink_mine_button.png',
+                                    'daily_streak_collect_button.png',
+                                    'daily_streak_ok_button.png',
+                                    'mine_button_shrink.png',
                                     'mine_button.png',
                                     ],
                                     parent_directory='Bitcoin_Miner',
@@ -460,41 +469,22 @@ if __name__ == "__main__":
                         print("Found upgrade Button")
                         nf.tap(xCor, yCor, settle_delay=1)
                         
-                        #Attempt to find the upgrade income button
+                        #Attempt to find the quick buy button
                         print("Attempting to upgrade")
-                        upgrade_income_button, xCor, yCor = nf.MoveToLocation(file_path='development_upgrade_button.png',
+                        quick_buy_button, xCor, yCor = nf.MoveToLocation(file_path='development_quick_buy_button.png',
                                                                               parent_directory='Bitcoin_Miner',
                                                                               timeout=5,
-                                                                              confidence=0.90)
+                                                                              confidence=0.80)
                         
-                        #If the upgrade income button is found, we tap on it
-                        if upgrade_income_button != '':
-                            #Tap on the upgrade income button
-                            print("Income is able to be upgraded. Tapping on it")
+                        #If the quick buy button is found, we tap on it
+                        if quick_buy_button != '':
+                            #Tap on the quick buy button
+                            print("Quick buy button was found. Tapping on it")
                             nf.tap(xCor, yCor)
                         
                         #Otherwise, we assume that we have insufficient funds to upgrade
                         else:
-
-                            print("Income is not able to be upgraded.")
-                            pass
-
-                        #Attempt to find the upgrade powerup button
-                        print("Attempting to upgrade")
-                        upgrade_powerup_button, xCor, yCor = nf.MoveToLocation(file_path='development_upgrade_button.png',
-                                                                               parent_directory='Bitcoin_Miner',
-                                                                               timeout=5,
-                                                                               confidence=0.90)
-                        
-                        #If the upgrade powerup button is found, we tap on it
-                        if upgrade_powerup_button != '':
-                            #Tap on the upgrade power up button
-                            print("Powerups are able to be upgraded. Tapping on it")
-                            nf.tap(xCor, yCor)
-                        
-                        #Otherwise, we assume that we have insufficient funds to upgrade
-                        else:
-                            print("Powerups are not able to be upgraded.")
+                            print("Quick buy button was not found. Assuming we have insufficient funds to upgrade")
                             pass
 
                         
@@ -517,11 +507,11 @@ if __name__ == "__main__":
                         
                         #If the grey unlock button is found, we hold down the button to upgrade the coin even if we don't have enough funds
                         if grey_unlock_button != '':
-                            #By using the coordinates of the grey unlock button, we hold down a section of the screen relative
+                            #By using the coordinates of the grey unlock button, we tap on a section of the screen relative
                             #to the grey unlock button. This section should be where the upgrade coin button is located for the
                             #the most recent coin that was unlocked
                             print("Attempting to upgrade coin by holding down the button")
-                            nf.hold(greyXCor, greyYCor, 2000, x_offset=134, y_offset=-73, settle_delay=1)
+                            nf.tap(greyXCor, greyYCor, x_offset=134, y_offset=-73, settle_delay=1)
 
                         #Regardless if we have upgraded production or the most recent coin, we reset the mine pickaxe counter
                         #and in increment the upgrade counter

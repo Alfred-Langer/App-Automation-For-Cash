@@ -75,7 +75,7 @@ def MoveToLocationList(file_paths:list,
                         y_offset=0, 
                         timeout=120, 
                         region_rectangle=SCRCPY_REGION_RECTANGLE, 
-                        confidence=0.9, 
+                        confidence=0.9,
                         settle_delay=1, 
                         gray_scale_flag=False, 
                         top_left_corner_flag=False,
@@ -223,20 +223,22 @@ def scale_value(unscaled_value, original_min, original_max, target_min, target_m
     return scaled_value
 
 # Tap at specific coordinates
-def tap(x, y, x_offset=0, y_offset=0,settle_delay=0):
+def tap(x, y, x_offset=0, y_offset=0,settle_delay=0, non_scale=False):
 
-    #Scale the coordinates from the computer screen to the phone screen
-    x = scale_value(x + x_offset, 
-                    SCRCPY_REGION_RECTANGLE[0], 
-                    SCRCPY_REGION_RECTANGLE[2], 
-                    0, 
-                    PHONE_SCREEN_RESOLUTION[0])
-    
-    y = scale_value(y + y_offset, 
-                    SCRCPY_REGION_RECTANGLE[1], 
-                    SCRCPY_REGION_RECTANGLE[3],
-                    0, 
-                    PHONE_SCREEN_RESOLUTION[1])
+    #Check if we are scaling the coordinates based on the SCRCPY_REGION_RECTANGLE
+    if not non_scale:
+        #Scale the coordinates from the computer screen to the phone screen
+        x = scale_value(x + x_offset, 
+                        SCRCPY_REGION_RECTANGLE[0], 
+                        SCRCPY_REGION_RECTANGLE[2], 
+                        0, 
+                        PHONE_SCREEN_RESOLUTION[0])
+        
+        y = scale_value(y + y_offset, 
+                        SCRCPY_REGION_RECTANGLE[1], 
+                        SCRCPY_REGION_RECTANGLE[3],
+                        0, 
+                        PHONE_SCREEN_RESOLUTION[1])
 
     #Send the tap command to the phone through adb
     adb_command(f'input tap {x} {y}')
@@ -401,7 +403,12 @@ def reset_from_unknown_state():
 
 
 # Function to clear advertisement that appear in the game/app
-def clear_advertisement():
+def clear_advertisement(timeout=120,region_rectangle=(
+        SCRCPY_REGION_RECTANGLE[0],
+        SCRCPY_REGION_RECTANGLE[1],
+        SCRCPY_REGION_RECTANGLE[2],
+        int(SCRCPY_REGION_RECTANGLE[3])
+    )):
 
     #Begin searching for any buttons that will skip, close, or advance the advertisement
     print("Searching for advertisement buttons")
@@ -410,6 +417,8 @@ def clear_advertisement():
     'ad_continue_button.png',
     'ad_continue_button_2.png',
     'ad_skip_button.png',
+    'google_play_store.png',
+    'google_play_store_2.png',
     'x_button_1.png',
     'x_button_2.png',
     'x_button_3.png',
@@ -454,18 +463,11 @@ def clear_advertisement():
     'x_button_42.png',
     'x_button_43.png',
     'x_button_44.png',
-    'x_button_45.png',
-    'google_play_store.png',
-    'google_play_store_2.png'],
+    'x_button_45.png'],
     parent_directory="Advertisements",
-    settle_delay=0.5,confidence=0.90,timeout=120,gray_scale_flag=True,
-    region_rectangle=(
-        SCRCPY_REGION_RECTANGLE[0],
-        SCRCPY_REGION_RECTANGLE[1],
-        SCRCPY_REGION_RECTANGLE[2],
-        int(SCRCPY_REGION_RECTANGLE[3])
-    )
-    )
+    settle_delay=0.5,confidence=0.85,timeout=timeout,gray_scale_flag=True,
+    region_rectangle=region_rectangle)
+    
 
 
     #If we find something, we proceed to click on it
