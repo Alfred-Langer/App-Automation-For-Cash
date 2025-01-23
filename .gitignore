@@ -157,6 +157,7 @@ cython_debug/
 Screenshots
 scrcpy-win64-v2.7
 app_automation_env
-*.txt
+Notes_to_myself
 old_scripts
 .vscode
+To do Issue.md
