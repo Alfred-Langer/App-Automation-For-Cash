@@ -245,20 +245,22 @@ def tap(x, y, x_offset=0, y_offset=0,settle_delay=0, non_scale=False):
     time.sleep(settle_delay)
 
 # Hold down a tap at specific coordinates
-def hold(x, y, duration=2000, x_offset=0, y_offset=0, settle_delay = 0):
+def hold(x, y, duration=2000, x_offset=0, y_offset=0, settle_delay = 0, non_scale=False):
 
-    #Scale the coordinates from the computer screen to the phone screen
-    x = scale_value(x + x_offset, 
-                    SCRCPY_REGION_RECTANGLE[0],
-                    SCRCPY_REGION_RECTANGLE[2], 
-                    0, 
-                    PHONE_SCREEN_RESOLUTION[0])
-    
-    y = scale_value(y + y_offset, 
-                    SCRCPY_REGION_RECTANGLE[1], 
-                    SCRCPY_REGION_RECTANGLE[3],
-                    0, 
-                    PHONE_SCREEN_RESOLUTION[1])
+    #Check if we are scaling the coordinates based on the SCRCPY_REGION_RECTANGLE
+    if not non_scale:
+        #Scale the coordinates from the computer screen to the phone screen
+        x = scale_value(x + x_offset, 
+                        SCRCPY_REGION_RECTANGLE[0], 
+                        SCRCPY_REGION_RECTANGLE[2], 
+                        0, 
+                        PHONE_SCREEN_RESOLUTION[0])
+        
+        y = scale_value(y + y_offset, 
+                        SCRCPY_REGION_RECTANGLE[1], 
+                        SCRCPY_REGION_RECTANGLE[3],
+                        0, 
+                        PHONE_SCREEN_RESOLUTION[1])
 
     #Send the hold command to the phone through adb
     adb_command(f'input swipe {x} {y} {x} {y} {duration}')
@@ -417,6 +419,7 @@ def clear_advertisement(timeout=120,region_rectangle=(
     'ad_continue_button.png',
     'ad_continue_button_2.png',
     'ad_skip_button.png',
+    'browser_is_open.png',
     'google_play_store.png',
     'google_play_store_2.png',
     'x_button_1.png',
@@ -478,9 +481,9 @@ def clear_advertisement(timeout=120,region_rectangle=(
         tap(xCor, yCor)
 
         #If you find the Google Play Store icon, we assume we are in the store and we need to retun to the game
-        if('google_play_store' in filePath):
+        if('google_play_store' in filePath or 'browser_is_open' in filePath):
 
-            print("Google Play Store was opened. Closing the app and returning to the game")
+            print("Google Play Store or a Browser was opened. Closing the app and returning to the game")
 
             #View currently running apps
             view_running_apps()

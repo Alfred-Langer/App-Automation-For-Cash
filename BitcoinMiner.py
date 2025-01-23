@@ -187,12 +187,12 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
                                     ],
                         parent_directory='Bitcoin_Miner',
                         timeout=4,
-                        region_rectangle_list=[((nf.SCRCPY_REGION_RECTANGLE[0] + nf.SCRCPY_REGION_RECTANGLE[2])//2, nf.SCRCPY_REGION_RECTANGLE[1], nf.SCRCPY_REGION_RECTANGLE[2], (nf.SCRCPY_REGION_RECTANGLE[1] + nf.SCRCPY_REGION_RECTANGLE[3])//4),
-                                               (nf.SCRCPY_REGION_RECTANGLE[0], (nf.SCRCPY_REGION_RECTANGLE[1] + nf.SCRCPY_REGION_RECTANGLE[3])//4, nf.SCRCPY_REGION_RECTANGLE[2]//2, nf.SCRCPY_REGION_RECTANGLE[3]//4),
-                                               (905, 648, 125, 22),
-                                               (1147,569,61,34),
-                                               (851,954,216,87),
-                                               (1133,187,70,65)],
+                        # region_rectangle_list=[((nf.SCRCPY_REGION_RECTANGLE[0] + nf.SCRCPY_REGION_RECTANGLE[2])//2, nf.SCRCPY_REGION_RECTANGLE[1], nf.SCRCPY_REGION_RECTANGLE[2], (nf.SCRCPY_REGION_RECTANGLE[1] + nf.SCRCPY_REGION_RECTANGLE[3])//4),
+                        #                        (nf.SCRCPY_REGION_RECTANGLE[0], (nf.SCRCPY_REGION_RECTANGLE[1] + nf.SCRCPY_REGION_RECTANGLE[3])//4, nf.SCRCPY_REGION_RECTANGLE[2]//2, nf.SCRCPY_REGION_RECTANGLE[3]//4),
+                        #                        (905, 648, 125, 22),
+                        #                        (1147,569,61,34),
+                        #                        (851,954,216,87),
+                        #                        (1133,187,70,65)],
                         gray_scale_flag=False,
                         settle_delay=0.0025,
                         confidence=0.90)
@@ -338,11 +338,11 @@ if __name__ == "__main__":
     move_to_flag = False
     gold_server_not_in_view = True
     mine_pickaxe_counter = 0
-    upgrade_counter = 5
+    upgrade_counter = 0
     ad_counter = 0
-    upgrade_counter_limit = 5
+    upgrade_counter_limit = 15
     ad_counter_limit = 3
-    mine_pickaxe_counter_limit = 15
+    mine_pickaxe_counter_limit = 5
     current_map = 1
     DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
     webhook = DiscordWebhook(url=DISCORD_WEBHOOK_URL)
@@ -497,27 +497,33 @@ if __name__ == "__main__":
                         if development_menu_x_button != '':
                             #Tap on the development menu close button
                             print("Closing the development menu")
-                            nf.tap(xCor, yCor)
-                    
-                        #Attempt to find the grey unlock button
-                        print("Attempting to upgrade a coin with leftover funds")
-                        grey_unlock_button,greyXCor,greyYCor = nf.MoveToLocation(file_path='unlock_coin_button_grey.png',
-                                                                                 parent_directory='Bitcoin_Miner',
-                                                                                 timeout=5)
-                        
-                        #If the grey unlock button is found, we hold down the button to upgrade the coin even if we don't have enough funds
-                        if grey_unlock_button != '':
-                            #By using the coordinates of the grey unlock button, we tap on a section of the screen relative
-                            #to the grey unlock button. This section should be where the upgrade coin button is located for the
-                            #the most recent coin that was unlocked
-                            print("Attempting to upgrade coin by holding down the button")
-                            nf.tap(greyXCor, greyYCor, x_offset=134, y_offset=-73, settle_delay=1)
+                            nf.tap(xCor, yCor, settle_delay=2)
 
-                        #Regardless if we have upgraded production or the most recent coin, we reset the mine pickaxe counter
-                        #and in increment the upgrade counter
-                        print("Upgrade complete. Resetting mine pickaxe count")
-                        mine_pickaxe_counter = 0
-                        upgrade_counter += 1
+                    #Upgrade your coins if you have leftover funds three times
+                    for x in range(3):
+
+                        #Attempt to find the coin_upgrade_button
+                        print("Attempting to upgrade a coin with leftover funds.")
+                        coin_upgrade, xCor, yCor = nf.MoveToLocation(file_path='coin_upgrade_button.png',
+                                                                                parent_directory='Bitcoin_Miner',
+                                                                                timeout=5,
+                                                                                confidence=0.80)
+                    
+                        #If the coin upgrade button is found, we tap on it
+                        if coin_upgrade != '':
+                            print("Coin upgrade button was found. Tapping on it")
+                            nf.hold(xCor, yCor, settle_delay=1)
+
+                        #If we can't find the coin upgrade button, we assume we have insufficient funds and break out of the loop
+                        else:
+                            print("Coin upgrade button was not found. Assuming we have insufficient funds to upgrade")
+                            break
+
+                    #Regardless if we have upgraded production or the most recent coin, we reset the mine pickaxe counter
+                    #and in increment the upgrade counter
+                    print("Upgrade complete. Resetting mine pickaxe count")
+                    mine_pickaxe_counter = 0
+                    upgrade_counter += 1
 
             #If the file path is map_button.png, we attempt to open the map and move to the next island
             elif(filePath == 'map_button.png'):
