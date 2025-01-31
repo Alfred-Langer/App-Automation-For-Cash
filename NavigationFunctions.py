@@ -139,6 +139,59 @@ def MoveToLocationList(file_paths:list,
 
     return ("",False, False)
 
+def MoveToLocationDictionary(file_paths: dict, 
+                        parent_directory,
+                        x_offset=0, 
+                        y_offset=0, 
+                        timeout=120, 
+                        confidence=0.9,
+                        settle_delay=1, 
+                        gray_scale_flag=False, 
+                        top_left_corner_flag=False,
+                        time_out_error_message=True,
+                        move_to_flag=False):
+    """
+    Moves the mouse to a specified location of an image on the screen and optionally clicks, within a specified timeout.
+
+    :param file_paths: Dictionary where keys are file paths of the images and values are region rectangles for each image.
+    :param x_offset: Integer representing the horizontal offset from the location.
+    :param y_offset: Integer representing the vertical offset from the location.
+    :param click_flag: Boolean indicating whether to click at the location (default: True).
+    :param click_delay: Float representing the delay in seconds before clicking (default: 0).
+    :param timeout: Integer representing the number of seconds to keep retrying the search.
+    :param confidence: Float representing how sure/accurate Pyautogui requires when searching for the requested image.
+    :param settle_delay: Integer representing the number of seconds that the program will pause after finding/clicking on the requested image before moving onto the next action so things can settle.
+    """
+
+    # end_time is the time value in which we will stop searching for the object 
+    end_time = time.time() + timeout
+    while time.time() < end_time:
+        for file_path, region_rectangle in file_paths.items():
+            # Convert region_rectangle into a region for Pyautogui
+            region = (region_rectangle[0], region_rectangle[1], region_rectangle[2] - region_rectangle[0], region_rectangle[3] - region_rectangle[1])
+            
+            try:
+                location = pyautogui.locateCenterOnScreen(f"./Screenshots/{parent_directory}/{file_path}",
+                                                          region=region,
+                                                          confidence=confidence,
+                                                          grayscale=gray_scale_flag)
+                if location:
+                    x, y = location
+                    x += x_offset
+                    y += y_offset
+                    
+                    if move_to_flag:
+                        pyautogui.moveTo(x, y)
+
+                    time.sleep(settle_delay)
+                    return file_path, x, y
+            except Exception as e:
+                print(f"Error locating {file_path}: {e}")
+
+    if time_out_error_message:
+        print(f"Timeout: Could not locate any of the images within the specified timeout of {timeout} seconds.")
+    return "", False, False
+
 
 def MoveToLocationListIndividualRegions(file_paths:list, 
                                         parent_directory,
@@ -499,5 +552,88 @@ def clear_advertisement(timeout=120,region_rectangle=(
     #If we don't find anything, we continue with the main while loop
     else:
         print("Couldn't find any advertisement buttons.")
+        
+
+        return False
+
+
+clear_advertisement_dictionary ={
+    'ad_continue_button.png':SCRCPY_REGION_RECTANGLE,
+    'ad_continue_button_2.png':SCRCPY_REGION_RECTANGLE,
+    'ad_close_button.png':(int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],140),
+    'ad_skip_button.png':SCRCPY_REGION_RECTANGLE,
+    'browser_is_open.png':SCRCPY_REGION_RECTANGLE,
+    'google_play_store.png':SCRCPY_REGION_RECTANGLE,
+    'google_play_store_2.png':SCRCPY_REGION_RECTANGLE,
+    'x_button_1.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],130),
+    'x_button_2.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],115),
+    'x_button_3.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],140),
+    'x_button_4.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],135),
+    'x_button_5.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],140),
+    'x_button_6.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],135),
+    'x_button_7.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],135),
+    'x_button_8.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],165),
+    'x_button_9.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],120),
+    'x_button_10.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],135),
+    'x_button_11.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],135),
+    'x_button_12.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],135),
+    'x_button_13.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],125),
+    'x_button_14.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],125),
+    'x_button_15.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],135),
+    'x_button_16.png': (SCRCPY_REGION_RECTANGLE[0],SCRCPY_REGION_RECTANGLE[1],int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),135),
+    'x_button_17.png': (SCRCPY_REGION_RECTANGLE[0],SCRCPY_REGION_RECTANGLE[1],int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),135),
+    'x_button_18.png': (SCRCPY_REGION_RECTANGLE[0],SCRCPY_REGION_RECTANGLE[1],int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),125),
+    'x_button_19.png': (SCRCPY_REGION_RECTANGLE[0],SCRCPY_REGION_RECTANGLE[1],int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),125),
+    'x_button_20.png': (SCRCPY_REGION_RECTANGLE[0],945,int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[3]),
+    'x_button_21.png': (SCRCPY_REGION_RECTANGLE[0],SCRCPY_REGION_RECTANGLE[1],int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),135),
+    'x_button_22.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],125),
+    'x_button_23.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],80),
+    'x_button_24.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],115),
+    'x_button_25.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],115),
+    'x_button_26.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],165),
+    'x_button_27.png': (int((SCRCPY_REGION_RECTANGLE[0] + SCRCPY_REGION_RECTANGLE[2]) / 2),SCRCPY_REGION_RECTANGLE[1],SCRCPY_REGION_RECTANGLE[2],135),
+}
+
+
+# Function to clear advertisement that appear in the game/app
+def clear_advertisement_2(timeout=60,clear_advertisement_dictionary=clear_advertisement_dictionary):
+
+    #Begin searching for any buttons that will skip, close, or advance the advertisement
+    print("Searching for advertisement buttons")
+    filePath, xCor, yCor = MoveToLocationDictionary(
+    file_paths=clear_advertisement_dictionary,
+    parent_directory="Advertisements",
+    settle_delay=0.5,confidence=0.875,timeout=timeout,gray_scale_flag=True,move_to_flag=False)
+    
+
+
+    #If we find something, we proceed to click on it
+    if(filePath != ''):
+
+        #Tap on the button
+        print(f"Found {filePath}")
+        tap(xCor, yCor)
+
+        #If you find the Google Play Store icon, we assume we are in the store and we need to retun to the game
+        if('google_play_store' in filePath or 'browser_is_open' in filePath):
+
+            print("Google Play Store or a Browser was opened. Closing the app and returning to the game")
+
+            #View currently running apps
+            view_running_apps()
+
+            #Clear the Google Play Store App
+            clear_app()
+
+            print("App has been cleared. We should be back in the game")
+        
+        #Returning True if we managed to find a an advertisement button
+        return True
+    
+    #If we don't find anything, we continue with the main while loop
+    else:
+        print("Couldn't find any advertisement buttons.")
+        
+
         return False
 

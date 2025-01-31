@@ -44,6 +44,35 @@ def open_up_gear():
     else:
         print("Unable to find a Gear Pack. Proceeding as normal.")
 
+def upgrade_ore(mine_name):
+
+    
+    #Locate the Ore Upgrade Button
+    upgrade_ore_button, upgrade_x_cor, upgrade_y_cor = nf.MoveToLocationList(file_paths=['upgrade_ore_button.png','claim_button.png'],
+                                                                parent_directory=f'Idle_Miner\\{mine_name}',
+                                                                timeout=5,
+                                                                confidence=0.85)
+
+    while upgrade_ore_button != "":
+        
+        if upgrade_ore_button == "claim_button.png":
+            print("Accidentally clicked on a gift. Ending the upgrade ore function.")
+            nf.tap(upgrade_x_cor, upgrade_y_cor)
+            break
+
+        else:
+            #Hold the Upgrade Button for 3 seconds
+            nf.hold(upgrade_x_cor, upgrade_y_cor, duration=3000, settle_delay= 2)
+
+            #Locate the Ore Upgrade Button
+            upgrade_ore_button, upgrade_x_cor, upgrade_y_cor = nf.MoveToLocationList(file_paths=['upgrade_ore_button.png','claim_button.png'],
+                                                                    parent_directory=f'Idle_Miner\\{mine_name}',
+                                                                    timeout=5,
+                                                                    confidence=0.85)
+
+    reset_tap()
+
+
 def identify_mine():
     #Identify which mine we are currently in
 

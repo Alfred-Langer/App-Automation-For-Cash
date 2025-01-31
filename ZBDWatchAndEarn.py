@@ -136,7 +136,7 @@ if __name__ == "__main__":
                 sys.exit()
 
         else:
-            nf.clear_advertisement(timeout=45, region_rectangle=nf.SCRCPY_REGION_RECTANGLE)
-
+            #nf.clear_advertisement(timeout=45, region_rectangle=nf.SCRCPY_REGION_RECTANGLE)
+            nf.clear_advertisement_2()
             
 

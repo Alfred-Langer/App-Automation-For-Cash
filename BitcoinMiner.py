@@ -79,7 +79,7 @@ def prestige():
                     return(True)
     
     else:
-        nf.clear_advertisement()
+        nf.clear_advertisement_2()
 
     #If we get to this point, then the prestige has failed and we attempt to return to the main while loop
     current_time = datetime.datetime.now()
@@ -187,12 +187,6 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
                                     ],
                         parent_directory='Bitcoin_Miner',
                         timeout=4,
-                        # region_rectangle_list=[((nf.SCRCPY_REGION_RECTANGLE[0] + nf.SCRCPY_REGION_RECTANGLE[2])//2, nf.SCRCPY_REGION_RECTANGLE[1], nf.SCRCPY_REGION_RECTANGLE[2], (nf.SCRCPY_REGION_RECTANGLE[1] + nf.SCRCPY_REGION_RECTANGLE[3])//4),
-                        #                        (nf.SCRCPY_REGION_RECTANGLE[0], (nf.SCRCPY_REGION_RECTANGLE[1] + nf.SCRCPY_REGION_RECTANGLE[3])//4, nf.SCRCPY_REGION_RECTANGLE[2]//2, nf.SCRCPY_REGION_RECTANGLE[3]//4),
-                        #                        (905, 648, 125, 22),
-                        #                        (1147,569,61,34),
-                        #                        (851,954,216,87),
-                        #                        (1133,187,70,65)],
                         gray_scale_flag=False,
                         settle_delay=0.0025,
                         confidence=0.90)
@@ -261,7 +255,7 @@ def prestige_and_farming(time_between_prestiges, time_since_last_prestige,curren
                             #Call the clear advertisement function
 
                             #If we find an advertisement button, we reset the ad_counter to 0
-                            if(nf.clear_advertisement()):
+                            if(nf.clear_advertisement_2()):
                                 ad_counter = 0
                             
                             #If we don't find any advertisement buttons, we increment the ad_counter
@@ -398,6 +392,9 @@ if __name__ == "__main__":
 
             #Reset the ad_counter to 0
             ad_counter = 0
+            mine_pickaxe_counter_limit = 0
+            upgrade_counter = 0
+            gold_server_not_in_view = True
 
         #If we have not reached the Upgrade Counter limit or the Ad Counter limit, we continue with the main loop
         print(f"Upgrade Counter is {upgrade_counter} out of {upgrade_counter_limit}")
@@ -406,13 +403,17 @@ if __name__ == "__main__":
         #Attempt to find the primary buttons
         print("Searching for primary buttons")
         filePath, xCor, yCor = nf.MoveToLocationList(file_paths=[
+                                    'reset_indicator.png',
                                     'store_x_button.png',
                                     'manager_recruit_x_button.png',
                                     'development_menu_x_button.png',
                                     'map_select_x_button.png',
                                     'welcome_back_x_button.png',
-                                    'prestige_icon_ready.png',
+                                    'daily_streak_collect_button.png',
+                                    'daily_streak_ok_button.png',
                                     'chest_collect_button.png',
+                                    'prestige_icon_ready.png',
+                                    'coin_upgrade_button.png',
                                     'unlock_coin_button.png',
                                     'map_button.png',
                                     'manager_ability_income.png',
@@ -420,13 +421,11 @@ if __name__ == "__main__":
                                     'manager_ability_power_up.png',
                                     #'power_surge_button.png',
                                     #'2x_income_button.png',
-                                    'daily_streak_collect_button.png',
-                                    'daily_streak_ok_button.png',
                                     'mine_button_shrink.png',
                                     'mine_button.png',
                                     ],
                                     parent_directory='Bitcoin_Miner',
-                                    timeout=5,settle_delay=0.01,confidence=0.90)
+                                    timeout=5,settle_delay=0.01,confidence=0.90,gray_scale_flag=False)
         
         #If we find a button, then we proceed
         if(filePath != ''):
@@ -435,7 +434,7 @@ if __name__ == "__main__":
             print(f"Found {filePath}")
 
             #If the file path contains x_button, we close the gift window
-            if("x_button" in filePath):
+            if("x_button" in filePath or "daily_streak" in filePath):
                 #Close the gift window
                 print("Closing gift window")
                 nf.tap(xCor, yCor,settle_delay=2)
@@ -499,25 +498,25 @@ if __name__ == "__main__":
                             print("Closing the development menu")
                             nf.tap(xCor, yCor, settle_delay=2)
 
-                    #Upgrade your coins if you have leftover funds three times
-                    for x in range(3):
+                    # #Upgrade your coins if you have leftover funds three times
+                    # for x in range(3):
 
-                        #Attempt to find the coin_upgrade_button
-                        print("Attempting to upgrade a coin with leftover funds.")
-                        coin_upgrade, xCor, yCor = nf.MoveToLocation(file_path='coin_upgrade_button.png',
-                                                                                parent_directory='Bitcoin_Miner',
-                                                                                timeout=5,
-                                                                                confidence=0.80)
+                    #     #Attempt to find the coin_upgrade_button
+                    #     print("Attempting to upgrade a coin with leftover funds.")
+                    #     coin_upgrade, xCor, yCor = nf.MoveToLocation(file_path='coin_upgrade_button.png',
+                    #                                                             parent_directory='Bitcoin_Miner',
+                    #                                                             timeout=5,
+                    #                                                             confidence=0.80)
                     
-                        #If the coin upgrade button is found, we tap on it
-                        if coin_upgrade != '':
-                            print("Coin upgrade button was found. Tapping on it")
-                            nf.hold(xCor, yCor, settle_delay=1)
+                    #     #If the coin upgrade button is found, we tap on it
+                    #     if coin_upgrade != '':
+                    #         print("Coin upgrade button was found. Tapping on it")
+                    #         nf.hold(xCor, yCor, settle_delay=1)
 
-                        #If we can't find the coin upgrade button, we assume we have insufficient funds and break out of the loop
-                        else:
-                            print("Coin upgrade button was not found. Assuming we have insufficient funds to upgrade")
-                            break
+                    #     #If we can't find the coin upgrade button, we assume we have insufficient funds and break out of the loop
+                    #     else:
+                    #         print("Coin upgrade button was not found. Assuming we have insufficient funds to upgrade")
+                    #         break
 
                     #Regardless if we have upgraded production or the most recent coin, we reset the mine pickaxe counter
                     #and in increment the upgrade counter
@@ -583,6 +582,23 @@ if __name__ == "__main__":
                 pyautogui.doubleClick(xCor, yCor)
                 time.sleep(0.5)
 
+            #If the file path is reset_indicator .png, we double check it with a higher confidence. If we find it again, then we reset
+            elif(filePath == "reset_indicator.png"):
+                #Pause execution for 3 seconds
+                time.sleep(3)
+            
+                #Attempt to find the reset indicator again
+                reset_indicator, xCor, yCor = nf.MoveToLocation(file_path='reset_indicator.png',
+                                                                parent_directory='Bitcoin_Miner',
+                                                                timeout=5,
+                                                                confidence=0.95)
+                
+                #If the reset indicator is found, we reset the game
+                if reset_indicator != '':
+                    print("Reset indicator found. Resetting the game")
+                    #Reset from unknown state
+                    nf.reset_from_unknown_state()
+
             #If any other button is found, we simply tap on it
             else:
                 #Tap on found primary button
@@ -596,7 +612,7 @@ if __name__ == "__main__":
         else:    
             #Call the clear advertisement function
             #If we find an advertisement button, we reset the ad_counter to 0
-            if(nf.clear_advertisement()):
+            if(nf.clear_advertisement_2()):
                 ad_counter = 0
             
             #If we don't find any advertisement buttons, we increment the ad_counter
